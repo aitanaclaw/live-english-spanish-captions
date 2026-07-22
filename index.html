@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Live English to Spanish Captions</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="topbar">
+      <div>
+        <p class="eyebrow">Traductor en vivo</p>
+        <h1>Inglés → Español</h1>
+      </div>
+      <button id="historyBtn" class="ghost small">Historial</button>
+    </section>
+
+    <section class="controlsCard">
+      <div class="controls">
+        <button id="startBtn">🎙️ Empezar</button>
+        <button id="stopBtn" class="secondary" disabled>Detener</button>
+        <button id="clearBtn" class="ghost">Limpiar</button>
+      </div>
+
+      <div class="settings">
+        <label>
+          Idioma
+          <select id="language">
+            <option value="en-US">English · US</option>
+            <option value="en-GB">English · UK</option>
+            <option value="en-AU">English · Australia</option>
+            <option value="en-CA">English · Canada</option>
+          </select>
+        </label>
+        <label class="toggle">
+          <input id="continuous" type="checkbox" checked />
+          Continua
+        </label>
+      </div>
+
+      <p id="status" class="status">Listo. Presiona “Empezar” y acepta el micrófono.</p>
+    </section>
+
+    <section class="stage" aria-live="polite">
+      <div class="listeningPulse" aria-hidden="true"></div>
+      <div class="subtitleWrap">
+        <div class="subtitleLabel">Español — frases nuevas arriba</div>
+        <div id="captionsFeed" class="captionsFeed">
+          <article class="captionItem live">
+            <div id="translationText" class="subtitleText">Aquí aparecerá la traducción…</div>
+            <div id="interimText" class="sourceText">Aquí aparecerá el inglés detectado…</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <aside id="historyPanel" class="historyPanel" hidden>
+      <div class="historyHeader">
+        <strong>Historial</strong>
+        <button id="closeHistoryBtn" class="ghost small">Cerrar</button>
+      </div>
+      <div class="historyColumns">
+        <div>
+          <div class="historyLabel">Español</div>
+          <div id="translationHistory" class="historyText"></div>
+        </div>
+        <div>
+          <div class="historyLabel">Inglés</div>
+          <div id="finalText" class="historyText muted"></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
