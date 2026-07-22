@@ -26,7 +26,7 @@ let translateTimer;
 let pauseTimer;
 let manuallyStopped = false;
 
-const PAUSE_TO_CLOSE_MS = 1250;
+const PAUSE_TO_CLOSE_MS = 650;
 const MAX_VISIBLE_CLOSED_CAPTIONS = 4;
 
 function setStatus(text, type = '') {
@@ -107,7 +107,7 @@ async function translateToSpanish(text, { updateLive = true } = {}) {
 
 function scheduleLiveTranslation(english) {
   clearTimeout(translateTimer);
-  translateTimer = setTimeout(() => translateToSpanish(english), 350);
+  translateTimer = setTimeout(() => translateToSpanish(english), 180);
 }
 
 function schedulePauseClose(english) {
@@ -171,7 +171,10 @@ function createRecognition() {
     scheduleLiveTranslation(displayedEnglish);
     schedulePauseClose(displayedEnglish);
 
-    if (gotFinal && !interim.trim()) schedulePauseClose(liveEnglish);
+    if (gotFinal && !interim.trim()) {
+      clearTimeout(pauseTimer);
+      pauseTimer = setTimeout(() => commitCaption(liveEnglish), 250);
+    }
   };
 
   rec.onerror = (event) => {
