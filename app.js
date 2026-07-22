@@ -6,8 +6,11 @@ const clearBtn = document.querySelector('#clearBtn');
 const historyBtn = document.querySelector('#historyBtn');
 const closeHistoryBtn = document.querySelector('#closeHistoryBtn');
 const historyPanel = document.querySelector('#historyPanel');
+const direction = document.querySelector('#direction');
 const language = document.querySelector('#language');
 const continuous = document.querySelector('#continuous');
+const titleDirection = document.querySelector('#titleDirection');
+const subtitleLabel = document.querySelector('#subtitleLabel');
 const statusEl = document.querySelector('#status');
 const finalTextEl = document.querySelector('#finalText');
 const interimTextEl = document.querySelector('#interimText');
@@ -45,8 +48,15 @@ function closeSentence(text) {
   return `${clean}.`;
 }
 
-function renderLive(english = '') {
-  interimTextEl.textContent = english || 'Aquí aparecerá el inglés detectado…';
+function getConfig() {
+  return direction.value === 'es-en'
+    ? { source: 'es', target: 'en', title: 'Español → Inglés', outputLabel: 'Inglés', inputLabel: 'español', defaultLang: 'es-PE' }
+    : { source: 'en', target: 'es', title: 'Inglés → Español', outputLabel: 'Español', inputLabel: 'inglés', defaultLang: 'en-US' };
+}
+
+function renderLive(sourceText = '') {
+  const cfg = getConfig();
+  interimTextEl.textContent = sourceText || `Aquí aparecerá el ${cfg.inputLabel} detectado…`;
 }
 
 function renderHistory() {
@@ -85,8 +95,9 @@ async function translateToSpanish(text, { updateLive = true } = {}) {
 
   const url = new URL('https://translate.googleapis.com/translate_a/single');
   url.searchParams.set('client', 'gtx');
-  url.searchParams.set('sl', 'en');
-  url.searchParams.set('tl', 'es');
+  const cfg = getConfig();
+  url.searchParams.set('sl', cfg.source);
+  url.searchParams.set('tl', cfg.target);
   url.searchParams.set('dt', 't');
   url.searchParams.set('q', clean);
 
@@ -137,6 +148,38 @@ async function commitCaption(rawEnglish) {
   renderLive('');
 }
 
+function updateDirectionUI() {
+  const cfg = getConfig();
+  titleDirection.textContent = cfg.title;
+  subtitleLabel.textContent = `${cfg.outputLabel} — frases nuevas arriba`;
+
+  const current = language.value;
+  if (direction.value === 'es-en') {
+    language.innerHTML = `
+      <option value="es-PE">Español · Perú</option>
+      <option value="es-ES">Español · España</option>
+      <option value="es-MX">Español · México</option>
+      <option value="es-US">Español · US</option>
+    `;
+  } else {
+    language.innerHTML = `
+      <option value="en-US">English · US</option>
+      <option value="en-GB">English · UK</option>
+      <option value="en-AU">English · Australia</option>
+      <option value="en-CA">English · Canada</option>
+    `;
+  }
+
+  if ([...language.options].some((option) => option.value === current)) {
+    language.value = current;
+  } else {
+    language.value = cfg.defaultLang;
+  }
+
+  if (recognition) recognition.lang = language.value;
+  if (!liveEnglish) renderLive('');
+}
+
 function createRecognition() {
   if (!SpeechRecognition) return null;
 
@@ -149,7 +192,8 @@ function createRecognition() {
   rec.onstart = () => {
     startBtn.disabled = true;
     stopBtn.disabled = false;
-    setStatus('Escuchando inglés y traduciendo al español…', 'listening');
+    const cfg = getConfig();
+    setStatus(`Escuchando ${cfg.inputLabel} y traduciendo a ${cfg.outputLabel.toLowerCase()}…`, 'listening');
   };
 
   rec.onresult = (event) => {
@@ -230,6 +274,10 @@ stopBtn.addEventListener('click', () => {
   recognition?.stop();
 });
 
+direction.addEventListener('change', () => {
+  updateDirectionUI();
+});
+
 clearBtn.addEventListener('click', () => {
   liveEnglish = '';
   finalEnglishHistory = [];
@@ -257,5 +305,6 @@ language.addEventListener('change', () => {
   if (recognition) recognition.lang = language.value;
 });
 
+updateDirectionUI();
 renderLive('');
 renderHistory();

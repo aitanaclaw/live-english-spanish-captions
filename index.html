@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Live English to Spanish Captions</title>
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
   <main class="app">
     <section class="topbar">
       <div>
         <p class="eyebrow">Traductor en vivo</p>
-        <h1>Inglés → Español</h1>
+        <h1 id="titleDirection">Inglés → Español</h1>
       </div>
       <button id="historyBtn" class="ghost small">Historial</button>
     </section>
@@ -25,7 +25,14 @@
 
       <div class="settings">
         <label>
-          Idioma
+          Dirección
+          <select id="direction">
+            <option value="en-es">Inglés → Español</option>
+            <option value="es-en">Español → Inglés</option>
+          </select>
+        </label>
+        <label>
+          Variante
           <select id="language">
             <option value="en-US">English · US</option>
             <option value="en-GB">English · UK</option>
@@ -45,11 +52,11 @@
     <section class="stage" aria-live="polite">
       <div class="listeningPulse" aria-hidden="true"></div>
       <div class="subtitleWrap">
-        <div class="subtitleLabel">Español — frases nuevas arriba</div>
+        <div id="subtitleLabel" class="subtitleLabel">Español — frases nuevas arriba</div>
         <div id="captionsFeed" class="captionsFeed">
           <article class="captionItem live">
             <div id="translationText" class="subtitleText">Aquí aparecerá la traducción…</div>
-            <div id="interimText" class="sourceText">Aquí aparecerá el inglés detectado…</div>
+            <div id="interimText" class="sourceText">Aquí aparecerá el audio detectado…</div>
           </article>
         </div>
       </div>
@@ -73,6 +80,6 @@
     </aside>
   </main>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
